@@ -61,7 +61,7 @@ const LoginPage = () => {
                 <span className="label-text font-medium">Password</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 pb-6 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-base-content/40" />
                 </div>
                 <input
@@ -71,9 +71,12 @@ const LoginPage = () => {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
+
+                <Link to='/forgot-password'>forgot password</Link>
+
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 pb-6 flex items-center"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (

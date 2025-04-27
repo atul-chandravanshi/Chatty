@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare, User } from "lucide-react";
+import axios from "axios";
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  Mail,
+  MessageSquare,
+  User,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 import AuthImagePattern from "../components/AuthImagePattern";
@@ -12,6 +21,7 @@ const SignUpPage = () => {
     fullName: "",
     email: "",
     password: "",
+    otp: "", // new state for OTP
   });
 
   const { signup, isSigningUp } = useAuthStore();
@@ -19,9 +29,13 @@ const SignUpPage = () => {
   const validateForm = () => {
     if (!formData.fullName.trim()) return toast.error("Full name is required");
     if (!formData.email.trim()) return toast.error("Email is required");
-    if (!/\S+@\S+\.\S+/.test(formData.email)) return toast.error("Invalid email format");
+    if (!/\S+@\S+\.\S+/.test(formData.email))
+      return toast.error("Invalid email format");
     if (!formData.password) return toast.error("Password is required");
-    if (formData.password.length < 6) return toast.error("Password must be at least 6 characters");
+    if (formData.password.length < 6)
+      return toast.error("Password must be at least 6 characters");
+    if (!formData.otp) return toast.error("OTP is required");
+    if (formData.otp.length !== 6) return toast.error("OTP must be 6 digits");
 
     return true;
   };
@@ -32,6 +46,22 @@ const SignUpPage = () => {
     const success = validateForm();
 
     if (success === true) signup(formData);
+  };
+
+  const handleSendOtp = async () => {
+    // Here you can add logic to send the OTP (e.g., calling an API to send the OTP to the user's email or phone)
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/send-otp`,
+        {
+          email: formData.email,
+        },
+        { withCredentials: true }
+      );
+      toast.success("OTP sent successfully!"); // Placeholder success message
+    } catch (error) {
+      toast.error("Failed to send OTP");
+    }
   };
 
   return (
@@ -49,7 +79,9 @@ const SignUpPage = () => {
                 <MessageSquare className="size-6 text-primary" />
               </div>
               <h1 className="text-2xl font-bold mt-2">Create Account</h1>
-              <p className="text-base-content/60">Get started with your free account</p>
+              <p className="text-base-content/60">
+                Get started with your free account
+              </p>
             </div>
           </div>
 
@@ -67,7 +99,9 @@ const SignUpPage = () => {
                   className={`input input-bordered w-full pl-10`}
                   placeholder="John Doe"
                   value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -85,7 +119,9 @@ const SignUpPage = () => {
                   className={`input input-bordered w-full pl-10`}
                   placeholder="you@example.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -103,7 +139,9 @@ const SignUpPage = () => {
                   className={`input input-bordered w-full pl-10`}
                   placeholder="••••••••"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                 />
                 <button
                   type="button"
@@ -119,7 +157,44 @@ const SignUpPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full" disabled={isSigningUp}>
+            {/* OTP Input */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">OTP</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="size-5 text-base-content/40" />
+                </div>
+                <input
+                  type="text"
+                  className={`input input-bordered w-full pl-10`}
+                  placeholder="Enter OTP"
+                  value={formData.otp}
+                  onChange={(e) =>
+                    setFormData({ ...formData, otp: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Send OTP Button */}
+            <div className="form-control">
+              <button
+                type="button"
+                className="btn btn-secondary w-full"
+                onClick={handleSendOtp}
+                disabled={isSigningUp}
+              >
+                Send OTP
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={isSigningUp}
+            >
               {isSigningUp ? (
                 <>
                   <Loader2 className="size-5 animate-spin" />
@@ -143,7 +218,6 @@ const SignUpPage = () => {
       </div>
 
       {/* right side */}
-
       <AuthImagePattern
         title="Join our community"
         subtitle="Connect with friends, share moments, and stay in touch with your loved ones."
@@ -151,4 +225,5 @@ const SignUpPage = () => {
     </div>
   );
 };
+
 export default SignUpPage;

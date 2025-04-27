@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import session from "express-session";
 
 const app = express();
 const server = http.createServer(app);
@@ -10,6 +11,19 @@ const io = new Server(server, {
     origin: ["http://localhost:5173"],
   },
 });
+
+app.use(
+  session({
+    secret: "atul1234",
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      secure: false,
+      httpOnly: true,// true in production if using HTTPS
+      maxAge: 10 * 60 * 1000, // 10 minutes session timeout
+    },
+  })
+);
 
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
