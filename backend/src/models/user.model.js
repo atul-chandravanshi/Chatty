@@ -46,9 +46,8 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
-    imageUrl: {
+    profilePic: {
       type: String,
-      default: "", // Optional: set default empty string if user doesn't upload
     },
     otpCode: {
       type: Number,
