@@ -1,7 +1,10 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
+  host: "smtp.example.com",
   service: "gmail",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.GMAIL,
     pass: process.env.GMAIL_PASSWORD,
