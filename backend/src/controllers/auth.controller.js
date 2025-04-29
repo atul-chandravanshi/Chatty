@@ -167,14 +167,30 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    generateToken(user._id, res);
+    // generateToken(user._id, res);
 
-    res.status(200).json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      profilePic: user.profilePic,
-    });
+    // res.status(200).json({
+    //   _id: user._id,
+    //   fullName: user.fullName,
+    //   email: user.email,
+    //   profilePic: user.profilePic,
+    // });
+
+    // lib/utils.js
+    
+//
+     const generateToken = (userId, res) => {
+      const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure in production
+        sameSite: "None", // Required for cross-origin cookies
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+    };
+ // 
   } catch (error) {
     console.log("Error in login controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
