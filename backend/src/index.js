@@ -28,7 +28,7 @@ app.use(cookieParser());
 // 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://chatty-ui-2z90.onrender.com",
+  
 ];
 
 app.use(
